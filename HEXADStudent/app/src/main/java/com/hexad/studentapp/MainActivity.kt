@@ -1,69 +1,53 @@
 package com.hexad.studentapp
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.hexad.studentapp.ui.theme.HEXADStudentTheme
+import androidx.fragment.app.FragmentActivity
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             HEXADStudentTheme {
-                val vm: AttendanceViewModel = viewModel()
-                MainScreen(vm = vm)
+                Surface(color = MaterialTheme.colorScheme.background) {
+                    val authVm: SimpleAuthViewModel = viewModel()
+                    AppNavHost(authVm)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun MainScreen(vm: AttendanceViewModel) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        floatingActionButton = {
-            FloatingActionButton(onClick = { vm.checkInNow() }) {
-                Icon(Icons.Default.Add, contentDescription = "Check in")
-            }
+private fun AppNavHost(authVm: SimpleAuthViewModel, navController: NavHostController = rememberNavController()) {
+    NavHost(navController = navController, startDestination = "login") {
+        composable("login") {
+            LoginScreen(
+                vm = authVm,
+                onRegisterClick = { navController.navigate("register") },
+                onLoginSuccess = { navController.navigate("home") }
+            )
         }
-    ) { innerPadding ->
-        AttendanceList(
-            records = vm.records,
-            modifier = Modifier.padding(innerPadding)
-        )
-    }
-}
-
-@Composable
-private fun AttendanceList(records: List<AttendanceRecord>, modifier: Modifier = Modifier) {
-    LazyColumn(modifier = modifier) {
-        items(records, key = { it.id }) { rec ->
-            Text(text = "Checked in: ${'$'}{rec.timestampMillis} (${ '$' }{rec.status})")
+        composable("register") {
+            RegisterScreen(
+                vm = authVm,
+                onRegisterSuccess = { navController.popBackStack(); navController.navigate("login") },
+                onBack = { navController.popBackStack() }
+            )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewMain() {
-    HEXADStudentTheme {
-        MainScreen(vm = AttendanceViewModel())
+        composable("home") {
+            HomeScreen(onLogout = { navController.popBackStack(route = "login", inclusive = false) })
+        }
     }
 }
