@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,32 +23,31 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.core.content.edit
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.AndroidViewModel
 import kotlinx.coroutines.launch
-import androidx.biometric.BiometricPrompt
-import androidx.biometric.BiometricManager
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
 
 class SimpleAuthViewModel(app: Application) : AndroidViewModel(app) {
     private val prefs = app.getSharedPreferences("auth", Context.MODE_PRIVATE)
 
     fun register(username: String, password: String): Result<Unit> {
         if (username.isBlank() || password.length < 4) return Result.failure(IllegalArgumentException("Invalid"))
-        val key = "user_${'$'}username"
+        val key = "user_$username"
         return if (!prefs.contains(key)) {
-            prefs.edit().putString(key, password).apply()
+            prefs.edit { putString(key, password) }
             Result.success(Unit)
         } else Result.failure(IllegalStateException("Exists"))
     }
 
     fun login(username: String, password: String): Result<Unit> {
-        val key = "user_${'$'}username"
+        val key = "user_$username"
         val stored = prefs.getString(key, null)
         return if (stored != null && stored == password) Result.success(Unit) else Result.failure(IllegalArgumentException("Bad creds"))
     }
@@ -115,7 +116,6 @@ fun HomeScreen(onLogout: () -> Unit) {
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val activity = context.findFragmentActivity()
 
     Scaffold(snackbarHost = { SnackbarHost(snackbar) }) { padding ->
         Column(
@@ -123,67 +123,70 @@ fun HomeScreen(onLogout: () -> Unit) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Welcome!")
+            Text("Home")
             Spacer(Modifier.height(12.dp))
             Button(onClick = {
-                if (activity == null) {
-                    scope.launch { snackbar.showSnackbar("Biometric not supported here") }
-                    return@Button
-                }
+                // Biometric flow
                 val authenticators = BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL
-                val biometricManager = BiometricManager.from(activity)
+                val biometricManager = BiometricManager.from(context)
                 when (biometricManager.canAuthenticate(authenticators)) {
                     BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                             val enrollIntent = Intent(Settings.ACTION_BIOMETRIC_ENROLL).putExtra(
                                 Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED, authenticators
                             )
-                            activity.startActivity(enrollIntent)
+                            context.startActivity(enrollIntent)
                         } else {
-                            scope.launch { snackbar.showSnackbar("Enroll fingerprint or set device lock") }
+                            scope.launch { snackbar.showSnackbar("No biometrics enrolled - set device lock or enroll") }
                         }
-                        return@Button
                     }
-                    BiometricManager.BIOMETRIC_SUCCESS -> { /* proceed */ }
+                    BiometricManager.BIOMETRIC_SUCCESS -> {
+                        val activity = (context as? FragmentActivity)
+                        val executor = ContextCompat.getMainExecutor(context)
+                        val callback = object : BiometricPrompt.AuthenticationCallback() {
+                            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                                super.onAuthenticationError(errorCode, errString)
+                                scope.launch { snackbar.showSnackbar("Error: ${'$'}errString") }
+                            }
+
+                            override fun onAuthenticationFailed() {
+                                super.onAuthenticationFailed()
+                                scope.launch { snackbar.showSnackbar("Not recognized") }
+                            }
+
+                            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                                super.onAuthenticationSucceeded(result)
+                                scope.launch { snackbar.showSnackbar("Attendance marked") }
+                            }
+                        }
+
+                        if (activity == null) {
+                            scope.launch { snackbar.showSnackbar("Activity not available for biometric prompt") }
+                            return@Button
+                        }
+
+                        val prompt = BiometricPrompt(activity, executor, callback)
+                        val promptInfoBuilder = BiometricPrompt.PromptInfo.Builder()
+                            .setTitle("Verify")
+                            .setSubtitle("Use fingerprint or device credential")
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            promptInfoBuilder.setAllowedAuthenticators(authenticators)
+                        } else {
+                            @Suppress("DEPRECATION")
+                            promptInfoBuilder.setDeviceCredentialAllowed(true)
+                        }
+
+                        prompt.authenticate(promptInfoBuilder.build())
+                    }
                     else -> {
                         scope.launch { snackbar.showSnackbar("Biometric unavailable") }
-                        return@Button
                     }
                 }
-
-                val executor = ContextCompat.getMainExecutor(activity)
-                val prompt = BiometricPrompt(activity, executor, object : BiometricPrompt.AuthenticationCallback() {
-                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                        scope.launch { snackbar.showSnackbar("Attendance marked ✔") }
-                    }
-                    override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                        scope.launch { snackbar.showSnackbar("Error: ${'$'}errString") }
-                    }
-                    override fun onAuthenticationFailed() {
-                        scope.launch { snackbar.showSnackbar("Not recognized") }
-                    }
-                })
-
-                val promptInfoBuilder = BiometricPrompt.PromptInfo.Builder()
-                    .setTitle("Mark Attendance")
-                    .setSubtitle("Authenticate to proceed")
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    promptInfoBuilder.setAllowedAuthenticators(authenticators)
-                } else {
-                    // On Android 10 and below, allow device credentials fallback
-                    @Suppress("DEPRECATION")
-                    promptInfoBuilder.setDeviceCredentialAllowed(true)
-                }
-                prompt.authenticate(promptInfoBuilder.build())
             }) { Text("Mark Attendance") }
+
             Spacer(Modifier.height(12.dp))
             Button(onClick = onLogout) { Text("Logout") }
         }
     }
-}
-
-private fun Context.findFragmentActivity(): FragmentActivity? = when (this) {
-    is FragmentActivity -> this
-    is android.content.ContextWrapper -> baseContext.findFragmentActivity()
-    else -> null
 }
