@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply select-none;
+}
+
+html, body, #root {
+  @apply w-full h-full;
+}
+
+body {
+  @apply bg-dark-900 text-slate-100 font-sans antialiased;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-600 rounded hover:bg-slate-500;
+}
+
+/* Utility classes */
+.gradient-primary {
+  @apply bg-gradient-primary;
+}
+
+.gradient-text {
+  @apply bg-gradient-primary bg-clip-text text-transparent;
+}
+
+.card {
+  @apply bg-slate-700 rounded-lg border border-slate-600 shadow-soft;
+}
+
+.card-hover {
+  @apply card hover:border-primary hover:shadow-glow transition-all duration-200;
+}
+
+.btn-base {
+  @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 ease-smooth focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-dark-900;
+}
+
+.btn-primary {
+  @apply btn-base bg-gradient-primary text-white hover:shadow-glow hover:scale-105 active:scale-95;
+}
+
+.btn-secondary {
+  @apply btn-base bg-slate-700 text-slate-100 hover:bg-slate-600 border border-slate-600;
+}
+
+.btn-danger {
+  @apply btn-base bg-error text-white hover:bg-red-600 active:scale-95;
+}
+
+.input-base {
+  @apply w-full px-4 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors duration-200;
+}
+
+/* Loading skeleton */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.skeleton {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}

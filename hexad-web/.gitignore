@@ -1,0 +1,24 @@
+# dependencies
+node_modules/
+
+# local env files
+server/.env
+client/.env
+client/.env.*
+
+# Firebase service account (never commit)
+server/serviceAccountKey.json
+server/serviceAccount*.json
+server/config/serviceAccountKey.json
+server/config/serviceAccount*.json
+
+# uploads/runtime data
+server/uploads/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# build output
+client/build/

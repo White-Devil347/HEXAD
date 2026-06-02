@@ -1,0 +1,104 @@
+/* Framer Motion compatible animations */
+
+/* Fade in animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Slide up animations */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide down animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Spin animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Bounce animation */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Glow effect */
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(167, 139, 250, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(167, 139, 250, 0.8);
+  }
+}
+
+/* Utility animations */
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-smooth forwards;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.3s ease-smooth forwards;
+}
+
+.animate-slideDown {
+  animation: slideDown 0.3s ease-smooth forwards;
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-smooth infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-bounce {
+  animation: bounce 1s ease-smooth infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-smooth infinite;
+}

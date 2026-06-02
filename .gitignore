@@ -1,0 +1,46 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.iml
+
+# Node
+**/node_modules/
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/.pnp*
+
+# Frontend builds
+**/build/
+**/dist/
+**/.cache/
+
+# Logs
+*.log
+.logs/
+
+# Env files / local config
+**/.env
+**/.env.*
+!**/.env.example
+**/local.properties
+
+# Firebase / service accounts / keys (DO NOT COMMIT)
+**/serviceAccountKey*.json
+**/*serviceAccount*.json
+**/*keystore*
+**/*.keystore
+hexad-web/hexad_keystore
+
+# Android
+**/.gradle/
+**/build/
+
+# Misc data dumps
+**/supermaindb.json
+**/wt1.json
+
+# Optional: Google Services config (often contains project identifiers)
+**/google-services.json

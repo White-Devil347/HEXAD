@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HEXAD Student</string>
+
+    <!-- Common branding -->
+    <string name="hexad_title">HEXAD</string>
+
+    <!-- Session / common buttons -->
+    <string name="session_code">Session Code</string>
+    <string name="proceed">Proceed</string>
+    <string name="profile">Profile</string>
+    <string name="upcoming_placeholder">Upcoming: Subjects • History • Stats</string>
+
+    <!-- Confirmation screen -->
+    <string name="offline_banner">No internet — attendance will sync automatically</string>
+    <string name="status">Status</string>
+    <string name="flag">FLAG</string>
+    <string name="details">Details</string>
+    <string name="expand">Expand</string>
+    <string name="retry_sync">Retry Sync</string>
+    <string name="back_to_session">Back to Session</string>
+
+    <!-- History screen -->
+    <string name="attendance_records">Attendance Records</string>
+    <string name="filter_all">All</string>
+    <string name="filter_pending">Pending</string>
+    <string name="filter_confirmed">Confirmed</string>
+    <string name="filter_failed">Failed</string>
+    <string name="filter_rejected">Rejected</string>
+
+    <!-- Navigation drawer -->
+    <string name="nav_profile">Profile</string>
+    <string name="nav_history">Attendance History</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+</resources>
