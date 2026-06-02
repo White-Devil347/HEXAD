@@ -231,4 +231,4 @@ This project is licensed under the MIT License.
 
 ---
 
-**HEXAD** - Making attendance tracking simple, secure, and smart.
+**HEXAD** - Making attendance tracking simple, fast ,secure, and smart.
