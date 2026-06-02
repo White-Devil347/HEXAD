@@ -38,6 +38,15 @@ hexad-web/hexad_keystore
 **/.gradle/
 **/build/
 
+# Android build outputs
+**/*.apk
+**/*.aab
+**/release/
+**/outputs/
+**/intermediates/
+**/generated/
+**/*.dm
+
 # Misc data dumps
 **/supermaindb.json
 **/wt1.json
