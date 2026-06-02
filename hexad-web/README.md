@@ -44,7 +44,7 @@ HEXAD is an attendance monitoring system with web dashboards for Teachers, Colle
 
 ```
 HEXAD/
-├── server/                    # Backend API
+├── backend/                   # Backend API
 │   ├── src/
 │   │   ├── config/           # Configuration
 │   │   ├── controllers/      # Route handlers
@@ -53,7 +53,7 @@ HEXAD/
 │   │   ├── routes/           # API routes
 │   │   └── utils/            # Utilities
 │   └── package.json
-├── client/                    # React Frontend
+├── frontend/                  # React Frontend
 │   ├── src/
 │   │   ├── components/       # Reusable components
 │   │   ├── context/          # React context
@@ -83,7 +83,7 @@ You also need a Firebase project with:
 
 ```bash
 # Navigate to server directory
-cd server
+cd backend
 
 # Install dependencies
 npm install
@@ -96,7 +96,7 @@ cp .env.example .env
 npm run dev
 ```
 
-Backend env vars (see [server/.env.example](server/.env.example)):
+Backend env vars (see [backend/.env.example](backend/.env.example)):
 - `PORT` (default `5000`)
 - `FIREBASE_SERVICE_ACCOUNT_PATH` (default `./config/serviceAccountKey.json`)
 - `FIREBASE_DATABASE_URL` (your RTDB URL)
@@ -105,7 +105,7 @@ Backend env vars (see [server/.env.example](server/.env.example)):
 
 ```bash
 # Navigate to client directory
-cd client
+cd frontend
 
 # Install dependencies
 npm install

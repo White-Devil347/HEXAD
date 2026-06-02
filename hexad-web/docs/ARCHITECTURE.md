@@ -251,7 +251,7 @@
 
 ```
 HEXAD/
-├── server/                    # Backend API
+├── backend/                   # Backend API
 │   ├── src/
 │   │   ├── config/           # Configuration
 │   │   │   └── index.js
@@ -290,7 +290,7 @@ HEXAD/
 │   ├── package.json
 │   └── .env.example
 │
-├── client/                    # Frontend React App
+├── frontend/                  # Frontend React App
 │   ├── public/
 │   │   └── index.html
 │   ├── src/

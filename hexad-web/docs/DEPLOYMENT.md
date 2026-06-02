@@ -1,8 +1,8 @@
 # Deployment Guide (HEXAD)
 
 This repo is split into:
-- `server/`: Express API that talks to Firebase Admin + RTDB
-- `client/`: React SPA (Create React App)
+- `backend/`: Express API that talks to Firebase Admin + RTDB
+- `frontend/`: React SPA (Create React App)
 
 ## 1) Prerequisites
 
@@ -14,9 +14,9 @@ This repo is split into:
 
 ## 2) Environment Variables
 
-### Server (`server/.env`)
+### Server (`backend/.env`)
 
-See `server/.env.example` for the full list. The important ones:
+See `backend/.env.example` for the full list. The important ones:
 
 - `PORT` (default `5000`)
 - `FIREBASE_SERVICE_ACCOUNT_PATH` (path to your service account JSON)
@@ -24,7 +24,7 @@ See `server/.env.example` for the full list. The important ones:
 - `CORS_ORIGINS` (comma-separated, e.g. `https://your-ui.com,https://www.your-ui.com`)
 - `PHOTO_ENCRYPTION_KEY` (set a strong 32+ char secret; do not use defaults)
 
-### Client (`client/.env.local`)
+### Client (`frontend/.env.local`)
 
 Firebase Auth config (required):
 - `REACT_APP_FIREBASE_API_KEY`
@@ -37,26 +37,26 @@ API base URL (optional):
 
 Notes:
 - If `REACT_APP_API_URL` is not set, the client calls `/api` (relative to the current origin).
-- In development, `client/package.json` uses a CRA `proxy` to `http://localhost:5000`.
+- In development, `frontend/package.json` uses a CRA `proxy` to `http://localhost:5000`.
 
 ## 3) Local Development
 
 ### Start the API
 
 ```bash
-cd server
+cd backend
 npm install
 cp .env.example .env
-# edit server/.env
+# edit backend/.env
 npm run dev
 ```
 
 ### Start the React app
 
 ```bash
-cd client
+cd frontend
 npm install
-# create client/.env.local
+# create frontend/.env.local
 npm start
 ```
 
@@ -68,17 +68,17 @@ npm start
 ### Build the client
 
 ```bash
-cd client
+cd frontend
 npm ci
 npm run build
 ```
 
-The static output will be in `client/build/`.
+The static output will be in `frontend/build/`.
 
 ### Run the server
 
 ```bash
-cd server
+cd backend
 npm ci
 npm start
 ```
@@ -95,7 +95,7 @@ Choose one of these patterns based on how you want routing and CORS to work.
 
 Common approach:
 - Put a reverse proxy (nginx/Traefik/Cloud provider routing) in front:
-  - `/` -> static `client/build`
+  - `/` -> static `frontend/build`
   - `/api/*` -> Node server
 
 ### Pattern B: Separate domains

@@ -2,7 +2,7 @@
 
 const path = require('path');
 
-// Ensure relative paths (like FIREBASE_SERVICE_ACCOUNT_PATH=./config/...) resolve from server/
+// Ensure relative paths (like FIREBASE_SERVICE_ACCOUNT_PATH=./config/...) resolve from backend/
 process.chdir(path.join(__dirname, '..'));
 
 require('dotenv').config({ path: path.join(process.cwd(), '.env') });
